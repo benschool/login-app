@@ -5,11 +5,13 @@ function checkCredentials({ username, password }, callback) {
       password: password,
     },
     { headers: { "Content-type": "application/json; charset=UTF-8" }}
-    ).then((r) => callback({ success: true, response: r }))
+  ).then((r) => callback({ success: true, response: r }))
     .catch((e) => callback({ success: false, response: e }))
 }
 
 document.getElementById('password').addEventListener('keyup', ({ key }) => key === 'Enter' ? submitForm() : null);
+document.getElementById('username').addEventListener('keyup', ({ key }) => key === 'Enter' ? submitForm() : null);
+document.getElementById('lock').onclick = submitForm;
 
 function submitForm() {
   const usernameInput = document.getElementById('username');
@@ -20,5 +22,11 @@ function submitForm() {
 
   checkCredentials({ username: usernameInput.value, password: passwordInput.value }, ({ success, response }) => {
     console.log(success, response);
+    if (success) {
+       window.location.href = '../../secret';
+       return;
+    }
+
+    document.getElementById('error').innerText = response.message;
   })
 }

@@ -1,10 +1,10 @@
 doctype html
 html
   head
-    title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src='https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js')
   body
+    .navbar
+      a#home-button(href='http://localhost:3000') 🏠
+      a#secret-button(href='http://localhost:3000/secret') 🤫
     block content
-  script
-    include ../public/javascripts/index.js

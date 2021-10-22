@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const express = require('express');
 const router = express.Router();
 
@@ -6,25 +8,41 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const { Login } = require('../db');
 
-passport.use(new LocalStrategy((username, password, done) => {
-  console.log(username, password, 'hi');
-    Login.findOne({ username }, function (err, user) {
-      console.log(err, user);
-      if (err) return done(err);
-      if (!user) return done(null, false, { message: 'Username or password incorrect' });
-      if (!user.validPassword(password)) return done(null, false, { message: 'Username or password incorrect' });
-
-      return done(null, user);
-    });
+passport.use(new LocalStrategy(async (username, password, done) => {
+    try {
+      Login.findOne({ username }).then((user) => {
+        if (!user) return done(null, false, { message: 'Username or password incorrect' });
+        if (user.password !== hash(password)) return done(null, false, { message: 'Username or password incorrect' });
+        return done(null, user);
+      })
+    } catch(e) {
+      return done(e)
+    }
   }
 ));
 
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
 router.post('/login',
-  passport.authenticate('local' , { failureRedirect: '/login', failureFlash: true })
+  passport.authenticate('local'),
+  (req, res) => {
+    console.log('success');
+    res.status(200).send(req.user);
+  }
 );
 
 router.get('/login', (req, res) => {
   res.render('login');
+});
+
+router.get('/register', (req, res) => {
+  res.render('register');
 });
 
 router.post('/logout', (req, res) => {
@@ -33,16 +51,17 @@ router.post('/logout', (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-  Login.exists({ username: req.data.username }, (err, exists) => {
-    if (err) return res.send({error: 'Error with the database'});
-    if (exists) return res.send({error: 'That username is taken'});
+  Login.exists({ username: req.body.username }, (err, exists) => {
+    console.log(err, exists);
+    if (err) return res.status(500).send('Error with the database');
+    if (exists) return res.status(406).send('That username is taken');
 
     let user = new Login();
-    user.username = req.data.username;
-    user.password = hash(req.data.password);
+    user.username = req.body.username;
+    user.password = hash(req.body.password);
     user.save();
 
-    res.send({});
+    res.status(200).send('OK');
   })
 });
 

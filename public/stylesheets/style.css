@@ -11,11 +11,41 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 /* Layout styling */
 #login-container {
   display: flex;
+}
+
+/* Element styling */
+#error {
+  color: #ff0937;
+  margin-top: 15px;
+}
+
+#menu > a {
+  font-size: 24px;
+  font-style: normal;
+  text-underline: none;
+  padding: 5px;
+}
+
+#menu > a:visited {
+  text-decoration: none;
+  color: black;
+}
+
+.navbar {
+  font-size: 64px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.navbar > a {
+  text-decoration: none;
 }
 
 /* Lock created by https://codepen.io/beccakroese */
@@ -62,24 +92,6 @@ body {
 /* Locked Hover */
 #lock:hover:before {
   height: 12px;
-}
-
-/* Unlocked */
-.unlocked {
-  transform: rotate(10deg);
-}
-.unlocked:before {
-  bottom: 130%;
-  left: 31%;
-  margin-left: -11.5px;
-  transform: rotate(-45deg);
-}
-.unlocked,
-.unlocked:before {
-  border-color: #6cff49;
-}
-.unlocked:after {
-  background: #6cff49;
 }
 
 .failed {
